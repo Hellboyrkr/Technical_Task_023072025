@@ -62,22 +62,22 @@ contract RWAAssetToken is ERC20, ERC20Pausable, AccessControl {
         _unpause();
     }
 
-    /// @notice Override _update to enforce compliance and pause checks
+    
     function _update(
         address from,
         address to,
         uint256 value
     ) internal override(ERC20, ERC20Pausable) {
-        // Call parent implementation first (includes pause check)
+        
         super._update(from, to, value);
         
-        // Minting (from = 0) and burning (to = 0) are allowed without compliance
+        
         if (from != address(0) && to != address(0)) {
             require(compliance.isTransferAllowed(from, to), "Transfer not compliant");
         }
     }
 
-    /// @notice Required for AccessControl interface support
+    
     function supportsInterface(bytes4 interfaceId)
         public
         view

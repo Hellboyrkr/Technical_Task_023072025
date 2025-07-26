@@ -16,8 +16,8 @@ contract ComplianceModule is Ownable, ReentrancyGuard {
     uint256 public maxTransferAmount;
     uint256 public dailyTransferLimit;
     
-    // Daily transfer tracking
-    mapping(address => mapping(uint256 => uint256)) public dailyTransfers; // user => day => amount
+    
+    mapping(address => mapping(uint256 => uint256)) public dailyTransfers; 
     
     event CountryAllowed(string country);
     event CountryDisallowed(string country);
@@ -32,15 +32,15 @@ contract ComplianceModule is Ownable, ReentrancyGuard {
         require(_registry != address(0), "Invalid registry address");
         registry = IdentityRegistry(_registry);
         
-        // Default settings
+        
         countryRestrictionsEnabled = false;
         blacklistEnabled = true;
-        maxTransferAmount = type(uint256).max; // No limit by default
-        dailyTransferLimit = type(uint256).max; // No limit by default
+        maxTransferAmount = type(uint256).max; 
+        dailyTransferLimit = type(uint256).max; 
     }
 
     function isTransferAllowed(address from, address to) external view returns (bool) {
-        return _isTransferAllowed(from, to, 0); // Amount check handled separately
+        return _isTransferAllowed(from, to, 0); 
     }
 
     function isTransferAllowedWithAmount(
@@ -56,24 +56,24 @@ contract ComplianceModule is Ownable, ReentrancyGuard {
         address to, 
         uint256 amount
     ) internal view returns (bool) {
-        // Allow minting (from = address(0)) and burning (to = address(0))
+        
         if (from == address(0) || to == address(0)) {
             return true;
         }
         
-        // Check blacklist
+        
         if (blacklistEnabled) {
             if (blacklistedAddresses[from] || blacklistedAddresses[to]) {
                 return false;
             }
         }
         
-        // Check if both parties are verified
+        
         if (!registry.isVerified(from) || !registry.isVerified(to)) {
             return false;
         }
         
-        // Check country restrictions if enabled
+        
         if (countryRestrictionsEnabled) {
             string memory fromCountry = registry.country(from);
             string memory toCountry = registry.country(to);
@@ -83,13 +83,13 @@ contract ComplianceModule is Ownable, ReentrancyGuard {
             }
         }
         
-        // Check transfer amount limits (skip for amount = 0 which is used for general checks)
+        
         if (amount > 0) {
             if (amount > maxTransferAmount) {
                 return false;
             }
             
-            // Check daily limit
+            
             uint256 currentDay = block.timestamp / 1 days;
             if (dailyTransfers[from][currentDay] + amount > dailyTransferLimit) {
                 return false;
@@ -100,7 +100,7 @@ contract ComplianceModule is Ownable, ReentrancyGuard {
     }
 
     function recordTransfer(address from, uint256 amount) external {
-        // Only the token contract should call this - you might want to add access control
+        
         require(from != address(0), "Invalid from address");
         
         uint256 currentDay = block.timestamp / 1 days;

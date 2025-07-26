@@ -26,12 +26,12 @@ contract IdentityRegistry is Ownable, ReentrancyGuard {
         require(bytes(userCountry).length > 0, "Country cannot be empty");
         require(bytes(userCountry).length <= 50, "Country name too long");
         
-        // If user was not previously verified, increment counters
+        
         if (!investors[user].isVerified) {
             totalVerifiedInvestors++;
             countryInvestorCount[userCountry]++;
         } else {
-            // If changing country, update counters
+            
             string memory oldCountry = investors[user].country;
             if (keccak256(bytes(oldCountry)) != keccak256(bytes(userCountry))) {
                 if (countryInvestorCount[oldCountry] > 0) {
@@ -56,7 +56,7 @@ contract IdentityRegistry is Ownable, ReentrancyGuard {
         
         string memory userCountry = investors[user].country;
         
-        // Update counters
+        
         if (totalVerifiedInvestors > 0) {
             totalVerifiedInvestors--;
         }
@@ -64,7 +64,7 @@ contract IdentityRegistry is Ownable, ReentrancyGuard {
             countryInvestorCount[userCountry]--;
         }
         
-        // Reset investor data
+        
         delete investors[user];
         
         emit VerificationRevoked(user, userCountry);
@@ -76,7 +76,7 @@ contract IdentityRegistry is Ownable, ReentrancyGuard {
     ) external onlyOwner nonReentrant {
         require(users.length == countries.length, "Arrays length mismatch");
         require(users.length > 0, "Empty arrays");
-        require(users.length <= 100, "Batch size too large"); // Gas optimization
+        require(users.length <= 100, "Batch size too large"); 
         
         for (uint256 i = 0; i < users.length; i++) {
             address user = users[i];
@@ -86,12 +86,12 @@ contract IdentityRegistry is Ownable, ReentrancyGuard {
             require(bytes(userCountry).length > 0, "Country cannot be empty");
             require(bytes(userCountry).length <= 50, "Country name too long");
             
-            // If user was not previously verified, increment counters
+            
             if (!investors[user].isVerified) {
                 totalVerifiedInvestors++;
                 countryInvestorCount[userCountry]++;
             } else {
-                // If changing country, update counters
+                
                 string memory oldCountry = investors[user].country;
                 if (keccak256(bytes(oldCountry)) != keccak256(bytes(userCountry))) {
                     if (countryInvestorCount[oldCountry] > 0) {
