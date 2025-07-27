@@ -5,7 +5,7 @@ async function main() {
     console.log("Starting RWA Token deployment...");
 
     
-    const [deployer] = await ethers.getSigners();// Get the deployer account
+    const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with account:", deployer.address);
     const balance = await ethers.provider.getBalance(deployer.address);
     console.log("Account balance:", ethers.formatEther(balance), "ETH");
